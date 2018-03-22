@@ -8,9 +8,12 @@
 
 ## Setting up your instance of ProcessWire
 
-Mysql database name, user and password are 'root' as defined in docker-compose.yml.
+### Instructions
+Clone this repo into your selected folder, run Docker, and enter `docker-compose up`. Please see documentation for Docker Compose for more details. Once **both** containers are up and running, go to `localhost` on your browser and follow the instructions to complete the install.
 
-Database host: If 'localhost' doesn't work, go to the command line and type
+The MySQL database name is `db`. MySQL user and password are 'root'. You may change these defitions in the `docker-compose.yml` file.
+
+Database host: Once in the ProcessWire install page, if 'localhost' doesn't work, go to the command line and type
 
 `docker network ls`
 
