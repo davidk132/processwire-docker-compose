@@ -1,10 +1,10 @@
 # About this ProcessWire Setup
 
-Dockerfile. Sets up the instance of PHP and Apache in its own container, including the specific dependencies required by ProcessWire. The dependencies are loaded and configured through a file called `local.ini` which is similar to `php.ini`. See PHP documentation for more info. I am choosing `local.ini` in order to avoid PHP upgrade issues in the future. This is probably unnecessary for a development site, however your future self should be your best friend. I like to think about what possible future problems I can avoid with what we know now.
+**Dockerfile**. Sets up the instance of PHP and Apache in its own container, including the specific dependencies required by ProcessWire. The dependencies are loaded and configured through a file called `local.ini` which is similar to `php.ini`. See PHP documentation for more info. I am choosing `local.ini` in order to avoid PHP upgrade issues in the future. This is probably unnecessary for a development site, however your future self should be your best friend. I like to think about what possible future problems I can avoid with what we know now.
 
-docker-compose.yml. Builds MySQL in its own container and links it with the PHP/Apache container in a common network. It also sets up a folder for your website data in a location on the host (i.e. your laptop computer).
+**docker-compose.yml**. Builds MySQL in its own container and links it with the PHP/Apache container in a common network. It also sets up a folder for your website data in a location on the host (i.e. your laptop computer).
 
-init.sh (required). This is a bash script that sets up `local.ini` (mentioned above) and runs the server. This could also happen within 'docker-compose.yml' however things get complicated when you're tryint to create a new directory (i.e. `/conf.d` for the `local.ini` file) inside Docker Compose.
+**init.sh**. This is a bash script that sets up `local.ini` (mentioned above) and runs the server. This could also happen within 'docker-compose.yml' however things get complicated when you're trying to create a new directory (i.e. `/conf.d` for the `local.ini` file) inside Docker Compose.
 
 ## Setting up your instance of ProcessWire
 
