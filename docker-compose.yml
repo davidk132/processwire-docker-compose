@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  db:
+    image: mysql:latest
+    volumes:
+     - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: root
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+
+  web:
+    depends_on:
+      - db
+    build: .
+    restart: always
+    volumes:
+      - ./html:/var/www/html
+      - ./config:/usr/local/etc/php
+    ports:
+      - "80:80"
+
+volumes:
+  db_data:
