@@ -8,12 +8,17 @@
 
 ## Setting up your instance of ProcessWire
 
-### Instructions
+## Instructions
 Clone this repo into your selected folder, run Docker, and enter `docker-compose up`. Please see documentation for Docker Compose for more details. Once **both** containers are up and running, go to `localhost` on your browser and follow the instructions to complete the install.
 
-The MySQL database name is `db`. MySQL user and password are 'root'. You may change these defitions in the `docker-compose.yml` file.
+Once in the ProcessWire install page, you will be prompted to enter information for connecting to the database. It's especially important to get this right when trying to connect with a separate Docker container, but luckily Docker makes it easy for us. More on that below.
 
-Database host: Once in the ProcessWire install page, if 'localhost' doesn't work, go to the command line and type
+### TL;DR
+The MySQL database name and hostname are both `db`. MySQL user and password are 'root'. You may change these defitions in the `docker-compose.yml` file.
+
+### The Docker Network
+
+First, let's look at the wrong way to connect to your database, which is nonetheless very educational. From the command line on the host (i.e. your computer), enter:
 
 `docker network ls`
 
@@ -45,7 +50,33 @@ Sample Docker network list of containers:
      }
 ```
 
+Having seen this approach, don't use it! Why? Every time Docker starts up this network and its containers, it may assign them a different IP address. If you try to connect from your browser, you will see an ugly, fatal error from which there is no escape.
+
+You could recover by finding the correct IP address again as shown above. But because ProcessWire is already installed, you can't go into the install tool because those files were (hopefully) deleted. Instead, go into `site/templates/config.php` and look for this line:
+
+`$config->dbHost = 'xxx.xxx.xxx.xxx'; // Actual IP address is here`
+
+and then replace the old IP address with the current IP address you just pulled up. Exhausting, isn't it?
+
+### The right way to identify your database host
+
+Look into `docker-compose.yml` and find the service that describes our database, like in this snippet:
+
+```
+services:
+  db:
+    image: mysql:latest
+```
+
+The name of the service is `db`. Every time Docker starts up the network and its containers, it comes up with an IP address, assigns `db` to it and makes it the hostname. Within this network, `db` resolves to whatever the IP address is. Armed with this knowledge, you can just enter `db` into the hostname field when installing or into `config.php` later on.
+
+When ProcessWire is installed, the line in `site/templates/config.php` should look like this:
+
+`$config->dbHost = 'db'; // That's it!`
+
+Yet another option, by the way, would be to assign a static IP address to your containers and hard code that into the `config.php` file. A solid understanding of Docker networking and general IP networking is highly recommended in this case. Even so, YMMV. The effort might get in the way of any actual web design you might be pursuing.
+
 ## Known issues and caveats
-* The containers should be set to `restart: always` because otherwise MySQL on occasion may decide  to stop working before you get it even set up.
+* The containers should be set to `restart: always` because otherwise MySQL on occasion may decide to stop working before you get it even set up.
 * The setup page may sometimes record your admin username and password, and then promptly lose it. I have no idea why this happens, however it is most definitely a fatal condition unless you go into `phpMyAdmin` and manually change it. See docs for more details.
 * This is not tested in any kind of production environment, so don't use it! This is for quickly spinning up a copy of ProcessWire to see what the fuss is all about or build a site for someone. While you're at it, you'll get to learn some of the finer points of configuring a PHP/Apache install.
